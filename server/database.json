@@ -1,0 +1,17 @@
+{
+  "dev": {
+    "url": { "ENV": "DATABASE_URL" },
+    "dir": "migrations",
+    "decamelize": true
+  },
+  "test": {
+    "url": { "ENV": "DATABASE_URL" },
+    "dir": "migrations",
+    "decamelize": true
+  },
+  "production": {
+    "url": { "ENV": "DATABASE_URL" },
+    "dir": "migrations",
+    "decamelize": true
+  }
+}
