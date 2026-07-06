@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'healthjournal'
+    static_configs:
+      - targets: ['server:5500']
+    metrics_path: '/metrics'
