@@ -22,13 +22,19 @@ exports.up = async (pgm) => {
     },
 
     raw_input: { type: "text", notNull: true },
-    symptoms: { type: "jsonb", default: "'[]'" },
+    symptoms: {
+      type: "jsonb",
+      default: pgm.func(`'[]'::jsonb`),
+    },
 
+    tags: {
+      type: "jsonb",
+      default: pgm.func(`'[]'::jsonb`),
+    },
     mood: { type: "integer" },
     energy_level: { type: "integer" },
     sleep_hours: { type: "numeric(4,1)" },
     notes: { type: "text" },
-    tags: { type: "jsonb", default: "'[]'" },
   });
 
   pgm.createTable("appointments", {
