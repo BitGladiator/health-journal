@@ -27,3 +27,4 @@ export const updateEntry = (id, data) =>
   apiFetch(`/symptoms/${id}`, { method: "PUT", body: JSON.stringify(data) });
 export const deleteEntry = (id) =>
   apiFetch(`/symptoms/${id}`, { method: "DELETE" });
+export const getAllTags = () => apiFetch("/symptoms/tags/all");
