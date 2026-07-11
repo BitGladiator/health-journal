@@ -4,9 +4,12 @@ const db = require("../db");
 const { symptomEntriesTotal } = require("../observability/metrics");
 const logger = require("../observability/logger");
 const { parseSymptoms } = require("../agents/symptomParser");
+const {
+  runCorrelationAnalysis,
+  computeWeeklySummary,
+} = require("../services/insightsService");
 
 const router = express.Router();
-
 
 router.get("/", authenticate, async (req, res) => {
   const { limit = 50, offset = 0, from, to, tag } = req.query;
@@ -55,7 +58,6 @@ router.get("/", authenticate, async (req, res) => {
   }
 });
 
-
 router.get("/:id", authenticate, async (req, res) => {
   try {
     const { rows } = await db.query(
@@ -69,7 +71,6 @@ router.get("/:id", authenticate, async (req, res) => {
   }
 });
 
-// POST /api/symptoms
 router.post("/", authenticate, async (req, res) => {
   const { raw_input, mood, energy_level, sleep_hours, notes, logged_at } =
     req.body;
@@ -79,9 +80,7 @@ router.post("/", authenticate, async (req, res) => {
   }
 
   try {
-
     const parsed = await parseSymptoms(raw_input.trim());
-
 
     const finalMood = mood ?? parsed.data?.mood ?? null;
     const finalEnergyLevel = energy_level ?? parsed.data?.energy_level ?? null;
@@ -117,7 +116,14 @@ router.post("/", authenticate, async (req, res) => {
       symptomsCount: symptoms.length,
       aiSuccess: parsed.success,
     });
-
+    setImmediate(async () => {
+      try {
+        await runCorrelationAnalysis(req.userId);
+        await computeWeeklySummary(req.userId);
+      } catch (err) {
+        logger.error("Background analysis failed", { error: err.message });
+      }
+    });
     res.status(201).json({
       ...rows[0],
       ai_summary: aiSummary,
@@ -128,12 +134,10 @@ router.post("/", authenticate, async (req, res) => {
   }
 });
 
-
 router.put("/:id", authenticate, async (req, res) => {
   const { raw_input, mood, energy_level, sleep_hours, notes } = req.body;
 
   try {
-
     let symptoms = undefined;
     let tags = undefined;
     let aiSummary = null;
@@ -176,7 +180,6 @@ router.put("/:id", authenticate, async (req, res) => {
   }
 });
 
-
 router.delete("/:id", authenticate, async (req, res) => {
   try {
     await db.query(
@@ -188,7 +191,6 @@ router.delete("/:id", authenticate, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 router.get("/tags/all", authenticate, async (req, res) => {
   try {
