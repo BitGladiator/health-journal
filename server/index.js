@@ -13,7 +13,7 @@ const logger = require('./observability/logger');
 
 const authRoutes     = require('./routes/auth');
 const symptomRoutes  = require('./routes/symptoms');
-
+const insightRoutes = require('./routes/insights');
 const app = express();
 
 
@@ -41,6 +41,7 @@ app.use(express.json({ limit: '10kb' }));
 
 app.use('/api/auth',     authLimiter, authRoutes);
 app.use('/api/symptoms', symptomRoutes);
+app.use('/api/insights', insightRoutes);
 
 app.get('/metrics', async (req, res) => {
   res.setHeader('Content-Type', register.contentType);

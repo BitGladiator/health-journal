@@ -33,7 +33,6 @@ const Dashboard = () => {
 
   return (
     <div style={{ maxWidth: "720px", margin: "0 auto", padding: "40px 24px" }}>
-
       <div
         style={{
           display: "flex",
@@ -110,8 +109,28 @@ const Dashboard = () => {
         </div>
         <span style={{ fontSize: "22px", color: "#a0aec0" }}>+</span>
       </div>
-
-
+      <div
+        onClick={() => navigate("/insights")}
+        style={{
+          background: "#F7FAFC",
+          border: "1px solid #e2e8f0",
+          borderRadius: "12px",
+          padding: "20px",
+          cursor: "pointer",
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#a0aec0")}
+        onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#e2e8f0")}
+      >
+        <span style={{ fontSize: "15px", fontWeight: "500", color: "#1a202c" }}>
+          View insights
+        </span>
+        <span style={{ fontSize: "12px", color: "#718096" }}>
+          Patterns and trends
+        </span>
+      </div>
       <h2
         style={{
           fontSize: "14px",
@@ -122,7 +141,7 @@ const Dashboard = () => {
       >
         Recent entries
       </h2>
-
+      
       {loading ? (
         <div style={{ color: "#a0aec0", fontSize: "13px" }}>Loading...</div>
       ) : entries.length === 0 ? (

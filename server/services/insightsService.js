@@ -98,15 +98,16 @@ const computeWeeklySummary = async (userId) => {
   for (const week of rows) {
     const { rows: symptomRows } = await db.query(
       `SELECT
-         jsonb_array_elements(symptoms)->>'name' as name,
-         COUNT(*)                                 as count,
-         ROUND(AVG((jsonb_array_elements(symptoms)->>'severity')::numeric), 1) as avg_severity
-       FROM symptom_entries
-       WHERE user_id = $1
-         AND logged_at >= $2
-         AND logged_at < $2::date + INTERVAL '7 days'
-         AND symptoms != '[]'
-       GROUP BY name
+         s->>'name'                                   AS name,
+         COUNT(*)                                      AS count,
+         ROUND(AVG((s->>'severity')::numeric), 1)      AS avg_severity
+       FROM symptom_entries e
+       CROSS JOIN LATERAL jsonb_array_elements(e.symptoms) AS s
+       WHERE e.user_id = $1
+         AND e.logged_at >= $2
+         AND e.logged_at < $2::date + INTERVAL '7 days'
+         AND e.symptoms != '[]'
+       GROUP BY s->>'name'
        ORDER BY count DESC
        LIMIT 5`,
       [userId, week.week_start]

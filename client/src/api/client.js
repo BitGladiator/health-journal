@@ -28,3 +28,13 @@ export const updateEntry = (id, data) =>
 export const deleteEntry = (id) =>
   apiFetch(`/symptoms/${id}`, { method: "DELETE" });
 export const getAllTags = () => apiFetch("/symptoms/tags/all");
+export const getCorrelations = () => apiFetch("/insights/correlations");
+export const getWeeklySummaries = () => apiFetch("/insights/weekly");
+export const getSymptomFrequency = (days = 30) =>
+  apiFetch(`/insights/symptom-frequency?days=${days}`);
+export const getTimeline = (days = 30) =>
+  apiFetch(`/insights/timeline?days=${days}`);
+export const triggerAnalysis = () =>
+  apiFetch("/insights/analyse", { method: "POST" });
+export const dismissCorrelation = (id) =>
+  apiFetch(`/insights/correlations/${id}/dismiss`, { method: "PUT" });
